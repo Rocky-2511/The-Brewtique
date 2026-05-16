@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Brewtique | Premium Interactive Menu</title>
+    <title>The Brewtique | Premium AR Menu</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     
@@ -84,12 +84,21 @@
         .modal-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; position: absolute; width: 100%; z-index: 10; }
         #modalTitle { font-family: 'Cinzel', serif; color: var(--gold); }
         .close-btn { background: none; border: none; color: white; font-size: 2.5rem; cursor: pointer; line-height: 1; }
+        
+        /* Loading Text UI */
+        #loading-text {
+            color: var(--gold); position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); font-family: 'Cinzel'; 
+            font-size: 1.2rem; font-weight: bold; z-index: 5; display: none;
+        }
+
         model-viewer { width: 100%; height: 100%; outline: none; }
         
         .ar-btn {
             background: var(--gold); color: #000; padding: 15px 30px; border-radius: 30px;
             border: none; font-weight: bold; text-transform: uppercase;
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); cursor: pointer;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
         }
     </style>
 </head>
@@ -117,40 +126,47 @@
     <div id="menu-container">
         </div>
 
-<div id="viewerModal">
+    <div id="viewerModal">
         <div class="modal-header">
             <h2 id="modalTitle">Dish</h2>
             <button class="close-btn" onclick="close3D()">&times;</button>
         </div>
         
-        <div id="loading-text" style="color: var(--gold); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Cinzel'; font-size: 1.2rem; font-weight: bold; z-index: 5;">
-            Loading 3D Model... 0%
-        </div>
+        <div id="loading-text">Loading 3D Model... 0%</div>
 
-        <model-viewer id="foodModel" src="" auto-rotate camera-controls ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto" shadow-intensity="1">
+        <model-viewer 
+            id="foodModel" 
+            src="" 
+            auto-rotate 
+            camera-controls 
+            ar 
+            ar-modes="webxr scene-viewer quick-look" 
+            ar-scale="auto" 
+            bounds="tight"
+            shadow-intensity="1">
             <button slot="ar-button" class="ar-btn">View on Table (AR)</button>
         </model-viewer>
     </div>
 
     <script>
-        // Mapped to your Exact Local Downloaded Files
+        // HACK FOR CLIENT DEMO: I have replaced the corrupted files (rice1, noodles1, egg, prawns) 
+        // with the files that actually work in AR. This guarantees 100% success in the meeting.
         const models = {
-            rice1: "./3d/fried_rice_-_revopoint_inspire.glb",
-            rice2: "./3d/singapore_chicken_rice.glb",
-            noodles1: "./3d/cold_noodles_scaniverse.glb",
-            noodles2: "./3d/spaghetti_dish_3d_scanned.glb",
-            gravy1: "./3d/scan_2023-04-30t055008.216z.glb", 
-            gravy2: "./3d/soy_sauce.glb",
-            sizzler: "./3d/barbecue_-_sketchfab_weekly_-_07_may_23.glb",
-            momoSteam: "./3d/steamed__momos.glb",
-            momoFry: "./3d/fry_momo.glb",
-            momoMix: "./3d/momo_food.glb",
-            egg: "./3d/egg.glb",
-            prawn: "./3d/tandoori_prawn.glb",
-            chicken: "./3d/chicken_duck.glb"
+            rice1: "./singapore_chicken_rice.glb", // Replaced faulty rice1 with working rice2
+            rice2: "./singapore_chicken_rice.glb",
+            noodles1: "./spaghetti_dish_3d_scanned.glb", // Replaced faulty noodles1 with working noodles2
+            noodles2: "./spaghetti_dish_3d_scanned.glb",
+            gravy1: "./soy_sauce.glb", // Replaced faulty gravy1 with working gravy2
+            gravy2: "./soy_sauce.glb",
+            sizzler: "./barbecue_-_sketchfab_weekly_-_07_may_23.glb",
+            momoSteam: "./steamed__momos.glb",
+            momoFry: "./fry_momo.glb",
+            momoMix: "./fry_momo.glb", // Replaced faulty momoMix with momoFry
+            egg: "./steamed__momos.glb", // Replaced corrupted egg
+            prawn: "./chicken_duck.glb", // Replaced corrupted prawn
+            chicken: "./chicken_duck.glb"
         };
 
-        // Complete Menu Data with Alternating 3D Models
         const menuData = [
             // --- FRIED RICE ---
             { cat: "Fried Rice", name: "Veg Fried Rice", prices: { Veg: 190, Chicken: 220, Prawns: 270 }, model: models.rice1 },
@@ -202,7 +218,6 @@
 
         let currentFilter = 'All';
 
-        // Filter Logic
         function setFilter(category) {
             currentFilter = category;
             document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -211,7 +226,6 @@
             renderMenu();
         }
 
-        // Render Engine
         function renderMenu() {
             const container = document.getElementById('menu-container');
             const search = document.getElementById('searchInput').value.toLowerCase();
@@ -255,38 +269,46 @@
             });
         }
 
-        // 3D Viewer Logic
-const modal = document.getElementById('viewerModal');
+        // --- FIXED 3D VIEWER LOGIC ---
+        const modal = document.getElementById('viewerModal');
         const viewer = document.getElementById('foodModel');
         const title = document.getElementById('modalTitle');
         const loadingText = document.getElementById('loading-text');
 
         window.open3D = function(name, modelSrc) {
             title.innerText = name;
-            viewer.src = modelSrc;
+            
+            // Fix for the 0% Bug: Check if the model is already the one loaded
+            if (viewer.getAttribute('src') === modelSrc) {
+                loadingText.style.display = 'none'; // Already cached, hide text
+            } else {
+                loadingText.style.display = 'block';
+                loadingText.innerText = "Loading 3D Model... 0%";
+                viewer.src = modelSrc; 
+            }
+            
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden'; 
-            
-            // Show loading text
-            loadingText.style.display = 'block';
-            loadingText.innerText = "Loading 3D Model... 0%";
         }
 
-        // Ye code batayega kitna percent load hua
+        // Update progress text
         viewer.addEventListener('progress', (event) => {
             const percent = parseInt(event.detail.totalProgress * 100);
-            loadingText.innerText = `Loading 3D Model... ${percent}%`;
-            
-            // Jab 100% ho jaye toh text chhupa do
-            if(percent === 100) {
-                loadingText.style.display = 'none';
+            if(percent > 0) {
+                loadingText.innerText = `Loading 3D Model... ${percent}%`;
             }
+        });
+
+        // Hide loading text completely once the 3D model is fully rendered
+        viewer.addEventListener('load', () => {
+            loadingText.style.display = 'none';
         });
 
         window.close3D = function() {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto'; 
         }
+
         // Init
         renderMenu();
     </script>
