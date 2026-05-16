@@ -128,61 +128,71 @@
     </div>
 
     <script>
-        // Placeholder High-Quality 3D Models for the Demo
-        const demoModels = {
-            burger: "https://modelviewer.dev/shared-assets/models/glTF-Sample-Models/2.0/Burger/glTF/Burger.gltf",
-            avocado: "https://modelviewer.dev/shared-assets/models/Avocado.glb",
-            cake: "https://modelviewer.dev/shared-assets/models/glTF-Sample-Models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf" // Just a 3D placeholder
+        // Mapped to your Exact Local Downloaded Files
+        const models = {
+            rice1: "./fried_rice_-_revopoint_inspire.glb",
+            rice2: "./singapore_chicken_rice.glb",
+            noodles1: "./cold_noodles_scaniverse.glb",
+            noodles2: "./spaghetti_dish_3d_scanned.glb",
+            gravy1: "./scan_2023-04-30t055008.216z.glb", 
+            gravy2: "./soy_sauce.glb",
+            sizzler: "./barbecue_-_sketchfab_weekly_-_07_may_23.glb",
+            momoSteam: "./steamed__momos.glb",
+            momoFry: "./fry_momo.glb",
+            momoMix: "./momo_food.glb",
+            egg: "./egg.glb",
+            prawn: "./tandoori_prawn.glb",
+            chicken: "./chicken_duck.glb"
         };
 
-        // Complete Menu Data extracted from your image
+        // Complete Menu Data with Alternating 3D Models
         const menuData = [
             // --- FRIED RICE ---
-            { cat: "Fried Rice", name: "Veg Fried Rice", prices: { Veg: 190, Chicken: 220, Prawns: 270 }, model: demoModels.burger },
-            { cat: "Fried Rice", name: "Schezwan Veg Fried Rice", prices: { Veg: 200, Chicken: 230, Prawns: 280 }, model: demoModels.burger },
-            { cat: "Fried Rice", name: "Triple Veg Fried Rice (gravy)", prices: { Veg: 280, Chicken: 310, Prawns: 360 }, model: demoModels.burger },
-            { cat: "Fried Rice", name: "Paneer Fried Rice", prices: { Single: 260 }, model: demoModels.burger },
-            { cat: "Fried Rice", name: "Singapore Rice", prices: { Veg: 220, Chicken: 250, Prawns: 300 }, model: demoModels.burger },
-            { cat: "Fried Rice", name: "Mushroom Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: demoModels.burger },
-            { cat: "Fried Rice", name: "Manchurian Rice", prices: { Veg: 220, Chicken: 240, Prawns: 290 }, model: demoModels.burger },
-            { cat: "Fried Rice", name: "Burnt Garlic Fried Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: demoModels.burger },
-            { cat: "Fried Rice", name: "Burnt Chilly Fried Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: demoModels.burger },
-            { cat: "Fried Rice", name: "Mongolian Rice", prices: { Veg: 290, Chicken: 350, Prawns: 400 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Veg Fried Rice", prices: { Veg: 190, Chicken: 220, Prawns: 270 }, model: models.rice1 },
+            { cat: "Fried Rice", name: "Schezwan Veg Fried Rice", prices: { Veg: 200, Chicken: 230, Prawns: 280 }, model: models.rice2 },
+            { cat: "Fried Rice", name: "Triple Veg Fried Rice (gravy)", prices: { Veg: 280, Chicken: 310, Prawns: 360 }, model: models.rice1 },
+            { cat: "Fried Rice", name: "Paneer Fried Rice", prices: { Single: 260 }, model: models.rice2 },
+            { cat: "Fried Rice", name: "Singapore Rice", prices: { Veg: 220, Chicken: 250, Prawns: 300 }, model: models.rice1 },
+            { cat: "Fried Rice", name: "Mushroom Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: models.rice2 },
+            { cat: "Fried Rice", name: "Manchurian Rice", prices: { Veg: 220, Chicken: 240, Prawns: 290 }, model: models.rice1 },
+            { cat: "Fried Rice", name: "Burnt Garlic Fried Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: models.rice2 },
+            { cat: "Fried Rice", name: "Burnt Chilly Fried Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: models.rice1 },
+            { cat: "Fried Rice", name: "Mongolian Rice", prices: { Veg: 290, Chicken: 350, Prawns: 400 }, model: models.rice2 },
 
             // --- NOODLES ---
-            { cat: "Noodles", name: "Veg Hakka Noodles", prices: { Veg: 190, Chicken: 220, Prawns: 270 }, model: demoModels.avocado },
-            { cat: "Noodles", name: "Schezwan Veg Noodles", prices: { Veg: 200, Chicken: 230, Prawns: 280 }, model: demoModels.avocado },
-            { cat: "Noodles", name: "Paneer Schezwan Noodles", prices: { Single: 230 }, model: demoModels.avocado },
-            { cat: "Noodles", name: "Triple Veg Noodles (gravy)", prices: { Veg: 290, Chicken: 350, Prawns: 390 }, model: demoModels.avocado },
-            { cat: "Noodles", name: "Burnt Garlic Veg Noodles", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: demoModels.avocado },
-            { cat: "Noodles", name: "Singapore Noodles", prices: { Veg: 230, Chicken: 280, Prawns: 330 }, model: demoModels.avocado },
-            { cat: "Noodles", name: "Spicy Pan Fried Noodles (gravy)", prices: { Veg: 330, Chicken: 370, Prawns: 430 }, model: demoModels.avocado },
-            { cat: "Noodles", name: "Mongolian Noodles", prices: { Veg: 290, Chicken: 340, Prawns: 420 }, model: demoModels.avocado },
+            { cat: "Noodles", name: "Veg Hakka Noodles", prices: { Veg: 190, Chicken: 220, Prawns: 270 }, model: models.noodles1 },
+            { cat: "Noodles", name: "Schezwan Veg Noodles", prices: { Veg: 200, Chicken: 230, Prawns: 280 }, model: models.noodles2 },
+            { cat: "Noodles", name: "Paneer Schezwan Noodles", prices: { Single: 230 }, model: models.noodles1 },
+            { cat: "Noodles", name: "Triple Veg Noodles (gravy)", prices: { Veg: 290, Chicken: 350, Prawns: 390 }, model: models.noodles2 },
+            { cat: "Noodles", name: "Burnt Garlic Veg Noodles", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: models.noodles1 },
+            { cat: "Noodles", name: "Singapore Noodles", prices: { Veg: 230, Chicken: 280, Prawns: 330 }, model: models.noodles2 },
+            { cat: "Noodles", name: "Spicy Pan Fried Noodles (gravy)", prices: { Veg: 330, Chicken: 370, Prawns: 430 }, model: models.noodles1 },
+            { cat: "Noodles", name: "Mongolian Noodles", prices: { Veg: 290, Chicken: 340, Prawns: 420 }, model: models.noodles2 },
 
             // --- GRAVY ---
-            { cat: "Gravy", name: "Veg Manchurian Gravy", prices: { Veg: 260, Chicken: 310, Prawns: 360 }, model: demoModels.burger },
-            { cat: "Gravy", name: "Paneer Chilly Gravy", prices: { Veg: 280, Chicken: 320, Prawns: 370 }, model: demoModels.burger },
-            { cat: "Gravy", name: "Schezwan Gravy", prices: { Veg: 290, Chicken: 340, Prawns: 390 }, model: demoModels.burger },
-            { cat: "Gravy", name: "Mix Veg in Hot Garlic Sauce", prices: { Single: 270 }, model: demoModels.burger },
-            { cat: "Gravy", name: "Hot Garlic Sauce", prices: { Chicken: 340, Prawns: 390 }, model: demoModels.burger },
-            { cat: "Gravy", name: "Mushroom Gravy", prices: { Single: 260 }, model: demoModels.burger },
+            { cat: "Gravy", name: "Veg Manchurian Gravy", prices: { Veg: 260, Chicken: 310, Prawns: 360 }, model: models.gravy1 },
+            { cat: "Gravy", name: "Paneer Chilly Gravy", prices: { Veg: 280, Chicken: 320, Prawns: 370 }, model: models.gravy1 },
+            { cat: "Gravy", name: "Schezwan Gravy", prices: { Veg: 290, Chicken: 340, Prawns: 390 }, model: models.gravy1 },
+            { cat: "Gravy", name: "Mix Veg in Hot Garlic Sauce", prices: { Single: 270 }, model: models.gravy2 },
+            { cat: "Gravy", name: "Hot Garlic Sauce", prices: { Chicken: 340, Prawns: 390 }, model: models.gravy2 },
+            { cat: "Gravy", name: "Mushroom Gravy", prices: { Single: 260 }, model: models.gravy2 },
 
             // --- SIZZLERS ---
-            { cat: "Sizzlers", name: "BBQ Sizzler", prices: { Veg: 499, NonVeg: 599 }, model: demoModels.cake },
-            { cat: "Sizzlers", name: "Black Pepper Sizzler", prices: { Veg: 599, NonVeg: 699 }, model: demoModels.cake },
+            { cat: "Sizzlers", name: "BBQ Sizzler", prices: { Veg: 499, NonVeg: 599 }, model: models.sizzler },
+            { cat: "Sizzlers", name: "Black Pepper Sizzler", prices: { Veg: 599, NonVeg: 699 }, model: models.sizzler },
 
             // --- MOMOS ---
-            { cat: "Momos", name: "Veg Momos (Steam/Fried)", prices: { Single: 180 }, model: demoModels.avocado },
-            { cat: "Momos", name: "Paneer Momos (Steam/Fried)", prices: { Single: 200 }, model: demoModels.avocado },
-            { cat: "Momos", name: "Chicken Momos (Steam/Fried)", prices: { Single: 230 }, model: demoModels.avocado },
-            { cat: "Momos", name: "Schezwan Chicken Momos", prices: { Single: 250 }, model: demoModels.avocado },
+            { cat: "Momos", name: "Veg Momos (Steam/Fried)", prices: { Single: 180 }, model: models.momoSteam },
+            { cat: "Momos", name: "Paneer Momos (Steam/Fried)", prices: { Single: 200 }, model: models.momoFry },
+            { cat: "Momos", name: "Chicken Momos (Steam/Fried)", prices: { Single: 230 }, model: models.momoMix },
+            { cat: "Momos", name: "Schezwan Chicken Momos", prices: { Single: 250 }, model: models.momoFry },
 
             // --- ADD ONS ---
-            { cat: "Add Ons", name: "Chicken", prices: { Single: 50 }, model: demoModels.burger },
-            { cat: "Add Ons", name: "Egg", prices: { Single: 40 }, model: demoModels.burger },
-            { cat: "Add Ons", name: "Prawns", prices: { Single: 70 }, model: demoModels.burger },
-            { cat: "Add Ons", name: "Schezwan sauce", prices: { Single: 30 }, model: demoModels.burger },
-            { cat: "Add Ons", name: "Fries Noodles", prices: { Single: 20 }, model: demoModels.burger }
+            { cat: "Add Ons", name: "Chicken", prices: { Single: 50 }, model: models.chicken },
+            { cat: "Add Ons", name: "Egg", prices: { Single: 40 }, model: models.egg },
+            { cat: "Add Ons", name: "Prawns", prices: { Single: 70 }, model: models.prawn },
+            { cat: "Add Ons", name: "Schezwan sauce", prices: { Single: 30 }, model: models.gravy2 },
+            { cat: "Add Ons", name: "Fries Noodles", prices: { Single: 20 }, model: models.noodles1 }
         ];
 
         let currentFilter = 'All';
@@ -254,8 +264,8 @@
 
         window.close3D = function() {
             modal.style.display = 'none';
-            viewer.src = '';
-            document.body.style.overflow = 'auto';
+            // viewer.src = ''; <-- REMOVED TO FIX THE FREEZE BUG
+            document.body.style.overflow = 'auto'; // Restore background scrolling
         }
 
         // Init
