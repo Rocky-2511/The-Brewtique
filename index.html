@@ -117,12 +117,17 @@
     <div id="menu-container">
         </div>
 
-    <div id="viewerModal">
+<div id="viewerModal">
         <div class="modal-header">
             <h2 id="modalTitle">Dish</h2>
             <button class="close-btn" onclick="close3D()">&times;</button>
         </div>
-        <model-viewer id="foodModel" src="" auto-rotate camera-controls ar shadow-intensity="1">
+        
+        <div id="loading-text" style="color: var(--gold); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Cinzel'; font-size: 1.2rem; font-weight: bold; z-index: 5;">
+            Loading 3D Model... 0%
+        </div>
+
+        <model-viewer id="foodModel" src="" auto-rotate camera-controls ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto" shadow-intensity="1">
             <button slot="ar-button" class="ar-btn">View on Table (AR)</button>
         </model-viewer>
     </div>
@@ -251,23 +256,37 @@
         }
 
         // 3D Viewer Logic
-        const modal = document.getElementById('viewerModal');
+const modal = document.getElementById('viewerModal');
         const viewer = document.getElementById('foodModel');
         const title = document.getElementById('modalTitle');
+        const loadingText = document.getElementById('loading-text');
 
         window.open3D = function(name, modelSrc) {
             title.innerText = name;
             viewer.src = modelSrc;
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Stop background scrolling
+            document.body.style.overflow = 'hidden'; 
+            
+            // Show loading text
+            loadingText.style.display = 'block';
+            loadingText.innerText = "Loading 3D Model... 0%";
         }
+
+        // Ye code batayega kitna percent load hua
+        viewer.addEventListener('progress', (event) => {
+            const percent = parseInt(event.detail.totalProgress * 100);
+            loadingText.innerText = `Loading 3D Model... ${percent}%`;
+            
+            // Jab 100% ho jaye toh text chhupa do
+            if(percent === 100) {
+                loadingText.style.display = 'none';
+            }
+        });
 
         window.close3D = function() {
             modal.style.display = 'none';
-            // viewer.src = ''; <-- REMOVED TO FIX THE FREEZE BUG
-            document.body.style.overflow = 'auto'; // Restore background scrolling
+            document.body.style.overflow = 'auto'; 
         }
-
         // Init
         renderMenu();
     </script>
