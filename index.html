@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Brewtique | Premium Interactive Menu</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark: #050505;
+            --glass: rgba(20, 20, 20, 0.7);
+            --border: rgba(212, 175, 55, 0.15);
+            --text: #f0f0f0;
+            --muted: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background-color: var(--dark); 
+            background-image: radial-gradient(circle at top, #1a1505 0%, var(--dark) 60%);
+            color: var(--text); 
+            padding-bottom: 50px;
+            min-height: 100vh;
+        }
+
+        /* --- Header & Navigation --- */
+        header { text-align: center; padding: 2rem 1rem 1rem; }
+        h1 { font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--gold); letter-spacing: 2px; }
+        .subtitle { color: var(--muted); font-size: 0.9rem; text-transform: uppercase; margin-top: 5px; }
+
+        .search-container { max-width: 500px; margin: 20px auto; padding: 0 20px; }
+        .search-bar {
+            width: 100%; padding: 12px 20px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border); border-radius: 25px; color: white; outline: none;
+            transition: border-color 0.3s;
+        }
+        .search-bar:focus { border-color: var(--gold); }
+
+        .category-nav {
+            display: flex; gap: 10px; overflow-x: auto; padding: 10px 20px;
+            max-width: 900px; margin: 0 auto; scrollbar-width: none;
+        }
+        .category-nav::-webkit-scrollbar { display: none; }
+        .cat-btn {
+            padding: 8px 16px; background: transparent; border: 1px solid #444;
+            color: #aaa; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.3s;
+        }
+        .cat-btn.active { background: var(--gold); color: var(--dark); border-color: var(--gold); font-weight: bold; }
+
+        /* --- Menu Grid Layout --- */
+        #menu-container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
+        .section-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.5rem; margin: 30px 0 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        
+        .menu-card {
+            background: var(--glass); backdrop-filter: blur(10px);
+            border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15); border-color: rgba(212, 175, 55, 0.4); }
+
+        .item-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: #fff; }
+
+        /* --- Pricing Layouts --- */
+        .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 8px; margin-bottom: 15px; }
+        .price-col { text-align: center; }
+        .p-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; display: block; }
+        .p-val { font-family: 'Cinzel', serif; color: var(--gold); font-weight: bold; font-size: 1rem; }
+        .single-price { font-family: 'Cinzel', serif; color: var(--gold); font-weight: bold; font-size: 1.2rem; text-align: right; margin-bottom: 15px; }
+
+        .view-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid var(--gold); color: var(--gold); border-radius: 6px; cursor: pointer; text-transform: uppercase; font-weight: 600; transition: 0.3s; }
+        .view-btn:hover { background: var(--gold); color: var(--dark); }
+
+        /* --- 3D Viewer Modal --- */
+        #viewerModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5,5,5,0.98); z-index: 1000; flex-direction: column;
+        }
+        .modal-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; position: absolute; width: 100%; z-index: 10; }
+        #modalTitle { font-family: 'Cinzel', serif; color: var(--gold); }
+        .close-btn { background: none; border: none; color: white; font-size: 2.5rem; cursor: pointer; line-height: 1; }
+        model-viewer { width: 100%; height: 100%; outline: none; }
+        
+        .ar-btn {
+            background: var(--gold); color: #000; padding: 15px 30px; border-radius: 30px;
+            border: none; font-weight: bold; text-transform: uppercase;
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>The Brewtique</h1>
+        <p class="subtitle">Immersive Digital Menu</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-bar" placeholder="Search for dishes..." onkeyup="renderMenu()">
+    </div>
+
+    <div class="category-nav" id="cat-nav">
+        <button class="cat-btn active" onclick="setFilter('All')">All</button>
+        <button class="cat-btn" onclick="setFilter('Fried Rice')">Fried Rice</button>
+        <button class="cat-btn" onclick="setFilter('Noodles')">Noodles</button>
+        <button class="cat-btn" onclick="setFilter('Gravy')">Gravy</button>
+        <button class="cat-btn" onclick="setFilter('Sizzlers')">Sizzlers</button>
+        <button class="cat-btn" onclick="setFilter('Momos')">Momos</button>
+        <button class="cat-btn" onclick="setFilter('Add Ons')">Add Ons</button>
+    </div>
+
+    <div id="menu-container">
+        </div>
+
+    <div id="viewerModal">
+        <div class="modal-header">
+            <h2 id="modalTitle">Dish</h2>
+            <button class="close-btn" onclick="close3D()">&times;</button>
+        </div>
+        <model-viewer id="foodModel" src="" auto-rotate camera-controls ar shadow-intensity="1">
+            <button slot="ar-button" class="ar-btn">View on Table (AR)</button>
+        </model-viewer>
+    </div>
+
+    <script>
+        // Placeholder High-Quality 3D Models for the Demo
+        const demoModels = {
+            burger: "https://modelviewer.dev/shared-assets/models/glTF-Sample-Models/2.0/Burger/glTF/Burger.gltf",
+            avocado: "https://modelviewer.dev/shared-assets/models/Avocado.glb",
+            cake: "https://modelviewer.dev/shared-assets/models/glTF-Sample-Models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf" // Just a 3D placeholder
+        };
+
+        // Complete Menu Data extracted from your image
+        const menuData = [
+            // --- FRIED RICE ---
+            { cat: "Fried Rice", name: "Veg Fried Rice", prices: { Veg: 190, Chicken: 220, Prawns: 270 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Schezwan Veg Fried Rice", prices: { Veg: 200, Chicken: 230, Prawns: 280 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Triple Veg Fried Rice (gravy)", prices: { Veg: 280, Chicken: 310, Prawns: 360 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Paneer Fried Rice", prices: { Single: 260 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Singapore Rice", prices: { Veg: 220, Chicken: 250, Prawns: 300 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Mushroom Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Manchurian Rice", prices: { Veg: 220, Chicken: 240, Prawns: 290 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Burnt Garlic Fried Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Burnt Chilly Fried Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: demoModels.burger },
+            { cat: "Fried Rice", name: "Mongolian Rice", prices: { Veg: 290, Chicken: 350, Prawns: 400 }, model: demoModels.burger },
+
+            // --- NOODLES ---
+            { cat: "Noodles", name: "Veg Hakka Noodles", prices: { Veg: 190, Chicken: 220, Prawns: 270 }, model: demoModels.avocado },
+            { cat: "Noodles", name: "Schezwan Veg Noodles", prices: { Veg: 200, Chicken: 230, Prawns: 280 }, model: demoModels.avocado },
+            { cat: "Noodles", name: "Paneer Schezwan Noodles", prices: { Single: 230 }, model: demoModels.avocado },
+            { cat: "Noodles", name: "Triple Veg Noodles (gravy)", prices: { Veg: 290, Chicken: 350, Prawns: 390 }, model: demoModels.avocado },
+            { cat: "Noodles", name: "Burnt Garlic Veg Noodles", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: demoModels.avocado },
+            { cat: "Noodles", name: "Singapore Noodles", prices: { Veg: 230, Chicken: 280, Prawns: 330 }, model: demoModels.avocado },
+            { cat: "Noodles", name: "Spicy Pan Fried Noodles (gravy)", prices: { Veg: 330, Chicken: 370, Prawns: 430 }, model: demoModels.avocado },
+            { cat: "Noodles", name: "Mongolian Noodles", prices: { Veg: 290, Chicken: 340, Prawns: 420 }, model: demoModels.avocado },
+
+            // --- GRAVY ---
+            { cat: "Gravy", name: "Veg Manchurian Gravy", prices: { Veg: 260, Chicken: 310, Prawns: 360 }, model: demoModels.burger },
+            { cat: "Gravy", name: "Paneer Chilly Gravy", prices: { Veg: 280, Chicken: 320, Prawns: 370 }, model: demoModels.burger },
+            { cat: "Gravy", name: "Schezwan Gravy", prices: { Veg: 290, Chicken: 340, Prawns: 390 }, model: demoModels.burger },
+            { cat: "Gravy", name: "Mix Veg in Hot Garlic Sauce", prices: { Single: 270 }, model: demoModels.burger },
+            { cat: "Gravy", name: "Hot Garlic Sauce", prices: { Chicken: 340, Prawns: 390 }, model: demoModels.burger },
+            { cat: "Gravy", name: "Mushroom Gravy", prices: { Single: 260 }, model: demoModels.burger },
+
+            // --- SIZZLERS ---
+            { cat: "Sizzlers", name: "BBQ Sizzler", prices: { Veg: 499, NonVeg: 599 }, model: demoModels.cake },
+            { cat: "Sizzlers", name: "Black Pepper Sizzler", prices: { Veg: 599, NonVeg: 699 }, model: demoModels.cake },
+
+            // --- MOMOS ---
+            { cat: "Momos", name: "Veg Momos (Steam/Fried)", prices: { Single: 180 }, model: demoModels.avocado },
+            { cat: "Momos", name: "Paneer Momos (Steam/Fried)", prices: { Single: 200 }, model: demoModels.avocado },
+            { cat: "Momos", name: "Chicken Momos (Steam/Fried)", prices: { Single: 230 }, model: demoModels.avocado },
+            { cat: "Momos", name: "Schezwan Chicken Momos", prices: { Single: 250 }, model: demoModels.avocado },
+
+            // --- ADD ONS ---
+            { cat: "Add Ons", name: "Chicken", prices: { Single: 50 }, model: demoModels.burger },
+            { cat: "Add Ons", name: "Egg", prices: { Single: 40 }, model: demoModels.burger },
+            { cat: "Add Ons", name: "Prawns", prices: { Single: 70 }, model: demoModels.burger },
+            { cat: "Add Ons", name: "Schezwan sauce", prices: { Single: 30 }, model: demoModels.burger },
+            { cat: "Add Ons", name: "Fries Noodles", prices: { Single: 20 }, model: demoModels.burger }
+        ];
+
+        let currentFilter = 'All';
+
+        // Filter Logic
+        function setFilter(category) {
+            currentFilter = category;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText === category);
+            });
+            renderMenu();
+        }
+
+        // Render Engine
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            container.innerHTML = '';
+
+            const categories = [...new Set(menuData.map(item => item.cat))];
+
+            categories.forEach(category => {
+                if (currentFilter !== 'All' && currentFilter !== category) return;
+
+                const items = menuData.filter(i => i.cat === category && i.name.toLowerCase().includes(search));
+                if (items.length === 0) return;
+
+                container.innerHTML += `<h2 class="section-title">${category}</h2>`;
+                const grid = document.createElement('div');
+                grid.className = 'menu-grid';
+
+                items.forEach(item => {
+                    let priceHTML = '';
+                    const keys = Object.keys(item.prices);
+
+                    if (keys.includes('Single') || keys.length === 1) {
+                        const val = item.prices['Single'] || item.prices[keys[0]];
+                        priceHTML = `<div class="single-price">₹${val}</div>`;
+                    } else {
+                        let cols = keys.map(k => `<div class="price-col"><span class="p-label">${k}</span><span class="p-val">₹${item.prices[k]}</span></div>`).join('');
+                        priceHTML = `<div class="price-grid">${cols}</div>`;
+                    }
+
+                    grid.innerHTML += `
+                        <div class="menu-card">
+                            <div>
+                                <h3 class="item-name">${item.name}</h3>
+                                ${priceHTML}
+                            </div>
+                            <button class="view-btn" onclick="open3D('${item.name}', '${item.model}')">View in 3D / AR</button>
+                        </div>
+                    `;
+                });
+                container.appendChild(grid);
+            });
+        }
+
+        // 3D Viewer Logic
+        const modal = document.getElementById('viewerModal');
+        const viewer = document.getElementById('foodModel');
+        const title = document.getElementById('modalTitle');
+
+        window.open3D = function(name, modelSrc) {
+            title.innerText = name;
+            viewer.src = modelSrc;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Stop background scrolling
+        }
+
+        window.close3D = function() {
+            modal.style.display = 'none';
+            viewer.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Init
+        renderMenu();
+    </script>
+</body>
+</html>

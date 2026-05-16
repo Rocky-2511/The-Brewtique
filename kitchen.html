@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kitchen Display System</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .dashboard-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .stat-box { background: #2c3e50; color: white; padding: 20px; border-radius: 8px; font-size: 1.2rem; }
+        .order-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .order-ticket { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-top: 5px solid #e74c3c; }
+        .done-btn { width: 100%; padding: 10px; background: #27ae60; color: white; border: none; font-size: 1.1rem; margin-top: 15px; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-header">
+        <h1>Kitchen Orders</h1>
+        <div class="stat-box" id="analytics">Revenue: ₹0 | Orders: 0</div>
+    </div>
+
+    <div class="order-grid" id="orders">
+        </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        async function fetchOrders() {
+            const res = await fetch(`${API_URL}/orders/kitchen`);
+            const orders = await res.json();
+            const container = document.getElementById('orders');
+            container.innerHTML = '';
+
+            orders.forEach(order => {
+                const items = JSON.parse(order.items);
+                let itemsList = items.map(i => `<li>${i.name}</li>`).join('');
+
+                container.innerHTML += `
+                    <div class="order-ticket">
+                        <h2>${order.table_number}</h2>
+                        <p>Time: ${new Date(order.timestamp).toLocaleTimeString()}</p>
+                        <ul>${itemsList}</ul>
+                        <button class="done-btn" onclick="completeOrder(${order.id})">Mark Completed</button>
+                    </div>
+                `;
+            });
+        }
+
+        async function fetchAnalytics() {
+            const res = await fetch(`${API_URL}/analytics`);
+            const data = await res.json();
+            document.getElementById('analytics').innerText = 
+                `Total Revenue: ₹${data.revenue || 0} | Total Orders: ${data.total_orders || 0}`;
+        }
+
+        async function completeOrder(id) {
+            await fetch(`${API_URL}/orders/complete/${id}`, { method: 'POST' });
+            fetchOrders(); // Refresh screen
+            fetchAnalytics();
+        }
+
+        // Auto-refresh the kitchen screen every 5 seconds
+        setInterval(fetchOrders, 5000);
+        setInterval(fetchAnalytics, 5000);
+        
+        // Initial load
+        fetchOrders();
+        fetchAnalytics();
+    </script>
+</body>
+</html>
