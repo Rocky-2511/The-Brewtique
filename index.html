@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Brewtique | Premium Interactive Menu</title>
+    <title>The Brewtique | Premium AR Menu</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -27,16 +28,16 @@
             min-height: 100vh;
         }
 
-        /* --- Header & Navigation --- */
         header { text-align: center; padding: 2rem 1rem 1rem; }
         h1 { font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--gold); letter-spacing: 2px; }
-        .subtitle { color: var(--muted); font-size: 0.9rem; text-transform: uppercase; margin-top: 5px; }
+        .subtitle { color: var(--muted); font-size: 0.9rem; text-transform: uppercase; margin-top: 5px; font-family: 'Inter', sans-serif; }
 
         .search-container { max-width: 500px; margin: 20px auto; padding: 0 20px; }
         .search-bar {
             width: 100%; padding: 12px 20px; background: rgba(255,255,255,0.05);
             border: 1px solid var(--border); border-radius: 25px; color: white; outline: none;
             transition: border-color 0.3s;
+            font-family: 'Inter', sans-serif;
         }
         .search-bar:focus { border-color: var(--gold); }
 
@@ -48,10 +49,10 @@
         .cat-btn {
             padding: 8px 16px; background: transparent; border: 1px solid #444;
             color: #aaa; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.3s;
+            font-family: 'Inter', sans-serif;
         }
         .cat-btn.active { background: var(--gold); color: var(--dark); border-color: var(--gold); font-weight: bold; }
 
-        /* --- Menu Grid Layout --- */
         #menu-container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
         .section-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.5rem; margin: 30px 0 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
@@ -64,32 +65,64 @@
         }
         .menu-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15); border-color: rgba(212, 175, 55, 0.4); }
 
-        .item-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: #fff; }
+        /* --- UPDATED DISH FONT (APPLE GARAMOND / ITALIC) --- */
+        .item-name { 
+            font-family: 'Apple Garamond', 'EB Garamond', serif; 
+            font-style: italic;
+            font-size: 1.4rem; /* Slightly larger for Garamond */
+            font-weight: 600; 
+            margin-bottom: 15px; 
+            color: #fff; 
+            letter-spacing: 0.5px;
+        }
 
-        /* --- Pricing Layouts --- */
         .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 8px; margin-bottom: 15px; }
         .price-col { text-align: center; }
-        .p-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; display: block; }
+        .p-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; display: block; font-family: 'Inter', sans-serif; }
         .p-val { font-family: 'Cinzel', serif; color: var(--gold); font-weight: bold; font-size: 1rem; }
         .single-price { font-family: 'Cinzel', serif; color: var(--gold); font-weight: bold; font-size: 1.2rem; text-align: right; margin-bottom: 15px; }
 
-        .view-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid var(--gold); color: var(--gold); border-radius: 6px; cursor: pointer; text-transform: uppercase; font-weight: 600; transition: 0.3s; }
+        .view-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid var(--gold); color: var(--gold); border-radius: 6px; cursor: pointer; text-transform: uppercase; font-weight: 600; transition: 0.3s; font-family: 'Inter', sans-serif; }
         .view-btn:hover { background: var(--gold); color: var(--dark); }
 
-        /* --- 3D Viewer Modal --- */
         #viewerModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5,5,5,0.98); z-index: 1000; flex-direction: column;
+            background: rgba(5,5,5,0.98); z-index: 1000;
         }
-        .modal-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; position: absolute; width: 100%; z-index: 10; }
-        #modalTitle { font-family: 'Cinzel', serif; color: var(--gold); }
-        .close-btn { background: none; border: none; color: white; font-size: 2.5rem; cursor: pointer; line-height: 1; }
-        model-viewer { width: 100%; height: 100%; outline: none; }
+        
+        .modal-header { 
+            position: absolute; top: 0; left: 0; width: 100%; 
+            padding: 20px; display: flex; justify-content: space-between; align-items: center; 
+            z-index: 50; 
+        }
+        
+        /* Updated Modal Title Font */
+        #modalTitle { 
+            font-family: 'Apple Garamond', 'EB Garamond', serif; 
+            font-style: italic;
+            font-size: 2rem;
+            color: var(--gold); 
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8); 
+        }
+        .close-btn { background: none; border: none; color: white; font-size: 2.5rem; cursor: pointer; line-height: 1; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        
+        #loading-text {
+            color: var(--gold); position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); font-family: 'Cinzel'; 
+            font-size: 1.2rem; font-weight: bold; z-index: 20; display: none;
+        }
+
+        #viewer-container { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; 
+        }
+        model-viewer { width: 100%; height: 100%; outline: none; background-color: transparent; }
         
         .ar-btn {
             background: var(--gold); color: #000; padding: 15px 30px; border-radius: 30px;
             border: none; font-weight: bold; text-transform: uppercase;
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); cursor: pointer;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
@@ -114,26 +147,18 @@
         <button class="cat-btn" onclick="setFilter('Add Ons')">Add Ons</button>
     </div>
 
-    <div id="menu-container">
-        </div>
+    <div id="menu-container"></div>
 
-<div id="viewerModal">
+    <div id="viewerModal">
         <div class="modal-header">
             <h2 id="modalTitle">Dish</h2>
             <button class="close-btn" onclick="close3D()">&times;</button>
         </div>
-        
-        <div id="loading-text" style="color: var(--gold); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Cinzel'; font-size: 1.2rem; font-weight: bold; z-index: 5;">
-            Loading 3D Model... 0%
-        </div>
-
-        <model-viewer id="foodModel" src="" auto-rotate camera-controls ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto" shadow-intensity="1">
-            <button slot="ar-button" class="ar-btn">View on Table (AR)</button>
-        </model-viewer>
+        <div id="loading-text">Loading... 0%</div>
+        <div id="viewer-container"></div>
     </div>
 
     <script>
-        // Mapped to your Exact Local Downloaded Files
         const models = {
             rice1: "./3d/fried_rice_-_revopoint_inspire.glb",
             rice2: "./3d/singapore_chicken_rice.glb",
@@ -150,9 +175,7 @@
             chicken: "./3d/chicken_duck.glb"
         };
 
-        // Complete Menu Data with Alternating 3D Models
         const menuData = [
-            // --- FRIED RICE ---
             { cat: "Fried Rice", name: "Veg Fried Rice", prices: { Veg: 190, Chicken: 220, Prawns: 270 }, model: models.rice1 },
             { cat: "Fried Rice", name: "Schezwan Veg Fried Rice", prices: { Veg: 200, Chicken: 230, Prawns: 280 }, model: models.rice2 },
             { cat: "Fried Rice", name: "Triple Veg Fried Rice (gravy)", prices: { Veg: 280, Chicken: 310, Prawns: 360 }, model: models.rice1 },
@@ -164,7 +187,6 @@
             { cat: "Fried Rice", name: "Burnt Chilly Fried Rice", prices: { Veg: 210, Chicken: 240, Prawns: 290 }, model: models.rice1 },
             { cat: "Fried Rice", name: "Mongolian Rice", prices: { Veg: 290, Chicken: 350, Prawns: 400 }, model: models.rice2 },
 
-            // --- NOODLES ---
             { cat: "Noodles", name: "Veg Hakka Noodles", prices: { Veg: 190, Chicken: 220, Prawns: 270 }, model: models.noodles1 },
             { cat: "Noodles", name: "Schezwan Veg Noodles", prices: { Veg: 200, Chicken: 230, Prawns: 280 }, model: models.noodles2 },
             { cat: "Noodles", name: "Paneer Schezwan Noodles", prices: { Single: 230 }, model: models.noodles1 },
@@ -174,7 +196,6 @@
             { cat: "Noodles", name: "Spicy Pan Fried Noodles (gravy)", prices: { Veg: 330, Chicken: 370, Prawns: 430 }, model: models.noodles1 },
             { cat: "Noodles", name: "Mongolian Noodles", prices: { Veg: 290, Chicken: 340, Prawns: 420 }, model: models.noodles2 },
 
-            // --- GRAVY ---
             { cat: "Gravy", name: "Veg Manchurian Gravy", prices: { Veg: 260, Chicken: 310, Prawns: 360 }, model: models.gravy1 },
             { cat: "Gravy", name: "Paneer Chilly Gravy", prices: { Veg: 280, Chicken: 320, Prawns: 370 }, model: models.gravy1 },
             { cat: "Gravy", name: "Schezwan Gravy", prices: { Veg: 290, Chicken: 340, Prawns: 390 }, model: models.gravy1 },
@@ -182,17 +203,14 @@
             { cat: "Gravy", name: "Hot Garlic Sauce", prices: { Chicken: 340, Prawns: 390 }, model: models.gravy2 },
             { cat: "Gravy", name: "Mushroom Gravy", prices: { Single: 260 }, model: models.gravy2 },
 
-            // --- SIZZLERS ---
             { cat: "Sizzlers", name: "BBQ Sizzler", prices: { Veg: 499, NonVeg: 599 }, model: models.sizzler },
             { cat: "Sizzlers", name: "Black Pepper Sizzler", prices: { Veg: 599, NonVeg: 699 }, model: models.sizzler },
 
-            // --- MOMOS ---
             { cat: "Momos", name: "Veg Momos (Steam/Fried)", prices: { Single: 180 }, model: models.momoSteam },
             { cat: "Momos", name: "Paneer Momos (Steam/Fried)", prices: { Single: 200 }, model: models.momoFry },
             { cat: "Momos", name: "Chicken Momos (Steam/Fried)", prices: { Single: 230 }, model: models.momoMix },
             { cat: "Momos", name: "Schezwan Chicken Momos", prices: { Single: 250 }, model: models.momoFry },
 
-            // --- ADD ONS ---
             { cat: "Add Ons", name: "Chicken", prices: { Single: 50 }, model: models.chicken },
             { cat: "Add Ons", name: "Egg", prices: { Single: 40 }, model: models.egg },
             { cat: "Add Ons", name: "Prawns", prices: { Single: 70 }, model: models.prawn },
@@ -202,7 +220,6 @@
 
         let currentFilter = 'All';
 
-        // Filter Logic
         function setFilter(category) {
             currentFilter = category;
             document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -211,7 +228,6 @@
             renderMenu();
         }
 
-        // Render Engine
         function renderMenu() {
             const container = document.getElementById('menu-container');
             const search = document.getElementById('searchInput').value.toLowerCase();
@@ -255,38 +271,57 @@
             });
         }
 
-        // 3D Viewer Logic
-const modal = document.getElementById('viewerModal');
-        const viewer = document.getElementById('foodModel');
+        // --- STABLE VIEWER LOGIC ---
+        const modal = document.getElementById('viewerModal');
         const title = document.getElementById('modalTitle');
         const loadingText = document.getElementById('loading-text');
+        const viewerContainer = document.getElementById('viewer-container');
 
         window.open3D = function(name, modelSrc) {
             title.innerText = name;
-            viewer.src = modelSrc;
-            modal.style.display = 'flex';
+            modal.style.display = 'block'; 
             document.body.style.overflow = 'hidden'; 
             
-            // Show loading text
             loadingText.style.display = 'block';
-            loadingText.innerText = "Loading 3D Model... 0%";
-        }
+            loadingText.innerText = "Loading... 0%";
 
-        // Ye code batayega kitna percent load hua
-        viewer.addEventListener('progress', (event) => {
-            const percent = parseInt(event.detail.totalProgress * 100);
-            loadingText.innerText = `Loading 3D Model... ${percent}%`;
-            
-            // Jab 100% ho jaye toh text chhupa do
-            if(percent === 100) {
+            viewerContainer.innerHTML = `
+                <model-viewer 
+                    id="foodModel" 
+                    src="${modelSrc}" 
+                    auto-rotate 
+                    camera-controls 
+                    ar 
+                    ar-modes="webxr scene-viewer quick-look" 
+                    ar-scale="auto" 
+                    bounds="tight"
+                    shadow-intensity="1">
+                    <button slot="ar-button" class="ar-btn">View on Table (AR)</button>
+                </model-viewer>
+            `;
+
+            const newViewer = document.getElementById('foodModel');
+
+            newViewer.addEventListener('progress', (event) => {
+                const percent = Math.round(event.detail.totalProgress * 100);
+                loadingText.innerText = `Loading... ${percent}%`;
+                
+                if(percent === 100) {
+                    setTimeout(() => { loadingText.style.display = 'none'; }, 300);
+                }
+            });
+
+            newViewer.addEventListener('load', () => {
                 loadingText.style.display = 'none';
-            }
-        });
+            });
+        }
 
         window.close3D = function() {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto'; 
+            viewerContainer.innerHTML = ''; // Memory clear
         }
+
         // Init
         renderMenu();
     </script>
